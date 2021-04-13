@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/toolmac/backend/issues"
   },
-  "homepage": "https://github.com/toolmac/backend#readme"
+  "homepage": "https://github.com/toolmac/backend#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
