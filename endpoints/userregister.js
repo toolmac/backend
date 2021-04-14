@@ -2,7 +2,7 @@ const sql = require('../lib/db');
 const bcrypt = require('bcrypt');
 const nanoid = require('nanoid');
 
-module.exports.name = "register";
+module.exports.name = "user/register";
 module.exports.verify = function (req, res) {
     return true;
 }

@@ -55,5 +55,6 @@ calendar/edit
 
 user/login
 user/register
+user/verify
 user/logout
 */
