@@ -19,18 +19,18 @@ module.exports.execute = function (req, res) {
         let lastname = req.body.lastname.trim();
         let username = req.body.username.trim();
         if (!helper.validateEmail(email)) {
-            res.status(400).send('Invalid email').end();
+            res.status(401).send('Invalid email').end();
         }
         else if (!helper.validatePassword(password)) {
-            res.status(400).send('Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character').end();
+            res.status(401).send('Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character').end();
         }
         else if (firstname == "" || lastname == "" || username == "") {
-            res.status(400).send('Empty fields').end();
+            res.status(401).send('Empty fields').end();
         }
         else {
             sql.rawGet(`SELECT * FROM users WHERE email = "${email}" OR username = "${username}"`).then(row => {
                 if (row) {
-                    res.status(400).send('Username or email is in use').end();
+                    res.status(401).send('Username or email is in use').end();
                 }
                 else {
                     let id = nanoid.nanoid();
@@ -50,6 +50,6 @@ module.exports.execute = function (req, res) {
         }
     }
     else {
-        res.status(400).end();
+        res.status(401).end();
     }
 }

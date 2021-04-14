@@ -18,13 +18,13 @@ module.exports.execute = function (req, res) {
         let email = (req.body.email) ? req.body.email.trim() : "";
         let username = (req.body.username) ? req.body.username.trim() : "";
         if (!helper.validateEmail(email)) {
-            res.status(400).send('Invalid email').end();
+            res.status(401).send('Invalid email').end();
         }
         else if (!helper.validatePassword(password)) {
-            res.status(400).send('Invalid password').end();
+            res.status(401).send('Invalid password').end();
         }
         else if (email == "" && username == "") {
-            res.status(400).send('Empty fields').end();
+            res.status(401).send('Empty fields').end();
         }
         else {
             sql.rawGet(`SELECT * FROM users WHERE email = "${email}" OR username = "${username}"`).then(row => {
@@ -60,6 +60,6 @@ module.exports.execute = function (req, res) {
         }
     }
     else {
-        res.status(400).end();
+        res.status(401).end();
     }
 }
