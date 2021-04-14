@@ -34,19 +34,26 @@ module.exports.execute = function (req, res) {
                             res.status(500).json('Error');
                         }
                         else if (result) {
-                            let obj = row;
-                            delete obj.password;
-                            delete obj.verified;
-                            obj.iat = Date.now();
-                            obj.exp = Date.now() + 20 * 60 * 1000;
-                            let accessToken = jwt.sign(obj, config.TOKEN_SECRET, { expiresIn: "20m" });
-                            let refreshToken = jwt.sign({ id: obj.id }, config.REFRESH_TOKEN_SECRET);
-                            sql.rawRun(`INSERT INTO refresh (id, token) VALUES("${obj.id}", "${refreshToken}")`).then(() => {
-                                res.json({
-                                    accessToken,
-                                    refreshToken
-                                });
-                            }).catch(err => res.status(500).json('Error'));
+                            if (row.verified == 1) {
+                                let obj = row;
+                                delete obj.password;
+                                delete obj.verified;
+                                obj.iat = Date.now();
+                                obj.exp = Date.now() + 20 * 60 * 1000;
+                                let accessToken = jwt.sign(obj, config.TOKEN_SECRET, { expiresIn: "20m" });
+                                let refreshToken = jwt.sign({ id: obj.id }, config.REFRESH_TOKEN_SECRET);
+                                sql.rawRun(`INSERT INTO refresh (id, token) VALUES("${obj.id}", "${refreshToken}")`).then(() => {
+                                    res.json({
+                                        accessToken,
+                                        refreshToken
+                                    });
+                                }).catch(err => res.status(500).json('Error'));
+                            }
+                            else {
+                                //on app, go to verification entry page
+                                //on website, redirect to verification
+                                res.status(401).json("Verification required");
+                            }
                         }
                         else {
                             res.status(401).json('Email/username or password is incorrect');
