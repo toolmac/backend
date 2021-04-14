@@ -10,12 +10,9 @@ module.exports.verify = function (req, res) {
 }
 
 module.exports.execute = function (req, res) {
-    const authHeader = req.headers.authorization;
-
+    const refeshAuth = req.body.token;
     if (authHeader) {
-        const token = authHeader.split(' ')[1];
-
-        jwt.verify(token, config.REFRESH_TOKEN_SECRET, (err, user) => {
+        jwt.verify(refeshAuth, config.REFRESH_TOKEN_SECRET, (err, user) => {
             if (err) {
                 return res.sendStatus(403);
             }
