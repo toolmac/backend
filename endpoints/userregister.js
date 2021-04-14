@@ -19,37 +19,37 @@ module.exports.execute = function (req, res) {
         let lastname = req.body.lastname.trim();
         let username = req.body.username.trim();
         if (!helper.validateEmail(email)) {
-            res.status(400).send('Invalid email').end();
+            res.status(400).json('Invalid email');
         }
         else if (!helper.validatePassword(password)) {
-            res.status(400).send('Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character').end();
+            res.status(400).json('Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character').end();
         }
         else if (firstname == "" || lastname == "" || username == "") {
-            res.status(400).send('Empty fields').end();
+            res.status(400).json('Empty fields');
         }
         else {
             sql.rawGet(`SELECT * FROM users WHERE email = "${email}" OR username = "${username}"`).then(row => {
                 if (row) {
-                    res.status(400).send('Username or email is in use').end();
+                    res.status(400).json('Username or email is in use');
                 }
                 else {
                     let id = nanoid.nanoid();
                     bcrypt.hash(password, 10, function (err, hash) {
                         if (err) {
-                            res.status(500).end();
+                            res.status(500).json('Error');
                         }
                         else {
                             sql.rawRun(`INSERT INTO users(username, email, password, id, firstname, lastname) VALUES("${username}", "${email}", "${hash}", "${id}", "${firstname}", "${lastname}")`).then(() => {
                                 //confirmation email goes here, when implemented
-                                res.status(200).send(id).end();
-                            }).catch(err => res.status(500).end());
+                                res.status(200).json(id);
+                            }).catch(err => res.status(500).json('Error'));
                         }
                     })
                 }
-            }).catch(err => res.status(500).end());
+            }).catch(err => res.status(500).json('Error'));
         }
     }
     else {
-        res.status(400).end();
+        res.status(400).json('Error');
     }
 }

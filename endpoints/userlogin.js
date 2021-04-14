@@ -18,20 +18,20 @@ module.exports.execute = function (req, res) {
         let email = (req.body.email) ? req.body.email.trim() : "";
         let username = (req.body.username) ? req.body.username.trim() : "";
         if (!helper.validateEmail(email)) {
-            res.status(400).send('Invalid email').end();
+            res.status(400).json('Invalid email');
         }
         else if (!helper.validatePassword(password)) {
-            res.status(400).send('Invalid password').end();
+            res.status(400).json('Invalid password');
         }
         else if (email == "" && username == "") {
-            res.status(400).send('Empty fields').end();
+            res.status(400).json('Empty fields');
         }
         else {
             sql.rawGet(`SELECT * FROM users WHERE email = "${email}" OR username = "${username}"`).then(row => {
                 if (row) {
                     bcrypt.compare(password, row.password, function (err, result) {
                         if (err) {
-                            res.status(500).end();
+                            res.status(500).json('Error');
                         }
                         else if (result) {
                             let obj = row;
@@ -46,20 +46,20 @@ module.exports.execute = function (req, res) {
                                     accessToken,
                                     refreshToken
                                 });
-                            }).catch(err => res.status(500).end());
+                            }).catch(err => res.status(500).json('Error'));
                         }
                         else {
-                            res.status(401).send('Email/username or password is incorrect').end();
+                            res.status(401).json('Email/username or password is incorrect');
                         }
                     });
                 }
                 else {
-                    res.status(401).send('Email/username or password is incorrect').end();
+                    res.status(401).json('Email/username or password is incorrect');
                 }
-            }).catch(err => res.status(500).end());
+            }).catch(err => res.status(500).json('Error'));
         }
     }
     else {
-        res.status(400).end();
+        res.status(400).json('Missing required fields');
     }
 }

@@ -14,16 +14,16 @@ module.exports.execute = function (req, res) {
     if (authHeader) {
         jwt.verify(refeshAuth, config.REFRESH_TOKEN_SECRET, (err, user) => {
             if (err) {
-                return res.sendStatus(403);
+                return res.status(403).json('Unauthorized');
             }
             else {
                 sql.rawRun(`DELETE FROM refresh WHERE token = "${refeshAuth}"`).then(() => {
-                    res.status(200).send('Logout success').end();
-                }).catch(err => res.status(500).end());
+                    res.status(200).json('Logout success');
+                }).catch(err => res.status(500).json('Error'));
             }
         });
     }
     else {
-        res.status(401).end();
+        res.status(401).json('Bad request');
     }
 }

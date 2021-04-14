@@ -24,7 +24,7 @@ fs.readdirSync('./endpoints/').forEach(function (file) {
 app.use('/', function (req, res) {
     const endpoint = req.url.split('?')[0].slice(1);
     if (!endpoints[endpoint]) {
-        res.status(404).send('Could not find endpoint').end();
+        res.status(404).json('Could not find endpoint');
     }
     else if (endpoints[endpoint].verify(req, res)) {
         try {
@@ -35,7 +35,7 @@ app.use('/', function (req, res) {
         }
     }
     else {
-        res.status(403).send('Not allowed').end();
+        res.status(403).json('Not allowed');
     }
 })
 
