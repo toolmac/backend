@@ -1,4 +1,5 @@
 const sql = require('../lib/db');
+const helper = require('../lib/helper');
 const bcrypt = require('bcrypt');
 const nanoid = require('nanoid');
 
@@ -17,10 +18,10 @@ module.exports.execute = function (req, res) {
         let firstname = req.body.firstname.trim();
         let lastname = req.body.lastname.trim();
         let username = req.body.username.trim();
-        if (!validateEmail(email)) {
+        if (!helper.validateEmail(email)) {
             res.status(400).send('Invalid email').end();
         }
-        else if (!validatePassword(password)) {
+        else if (!helper.validatePassword(password)) {
             res.status(400).send('Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character').end();
         }
         else if (firstname == "" || lastname == "" || username == "") {
@@ -51,14 +52,4 @@ module.exports.execute = function (req, res) {
     else {
         res.status(400).end();
     }
-}
-
-function validateEmail(email) { //https://stackoverflow.com/a/46181
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
-
-function validatePassword(password) { //https://stackoverflow.com/a/21456918
-    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return re.test(String(password));
 }
