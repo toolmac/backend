@@ -35,7 +35,7 @@ app.use('/', function (req, res) {
         }
     }
     else {
-        res.status(400).send('Not allowed').end();
+        res.status(403).send('Not allowed').end();
     }
 })
 
