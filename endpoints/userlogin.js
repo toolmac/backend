@@ -1,7 +1,8 @@
 const sql = require('../lib/db');
 const helper = require('../lib/helper');
 const bcrypt = require('bcrypt');
-const nanoid = require('nanoid');
+const jwt = require('jsonwebtoken');
+const config = require('../config.json');
 
 module.exports.name = "user/register";
 module.exports.verify = function (req, res) {
@@ -28,12 +29,24 @@ module.exports.execute = function (req, res) {
         else {
             sql.rawGet(`SELECT * FROM users WHERE email = "${email}" OR username = "${username}"`).then(row => {
                 if (row) {
-                    bcrypt.compare(password, row.password, function(err, result) {
-                        if(err) {
+                    bcrypt.compare(password, row.password, function (err, result) {
+                        if (err) {
                             res.status(500).end();
                         }
-                        else if(result) {
-                            //authorize access
+                        else if (result) {
+                            let obj = row;
+                            delete obj.password;
+                            delete obj.verified;
+                            obj.iat = Date.now();
+                            obj.exp = Date.now() + 20 * 60 * 1000;
+                            let accessToken = jwt.sign(obj, config.TOKEN_SECRET, { expiresIn: "20m" });
+                            let refreshToken = jwt.sign({ id: obj.id }, config.REFRESH_TOKEN_SECRET);
+                            sql.rawRun(`INSERT INTO refresh (id, token) VALUES("${obj.id}", "${refreshToken}")`).then(() => {
+                                res.json({
+                                    accessToken,
+                                    refreshToken
+                                });
+                            }).catch(err => res.status(500).end());
                         }
                         else {
                             res.status(401).send('Email/username or password is incorrect').end();
