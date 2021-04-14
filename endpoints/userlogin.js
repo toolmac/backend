@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../config.json');
 
-module.exports.name = "user/register";
+module.exports.name = "user/login";
 module.exports.verify = function (req, res) {
     return true;
 }
