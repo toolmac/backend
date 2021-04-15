@@ -38,8 +38,6 @@ module.exports.execute = function (req, res) {
                                 let obj = row;
                                 delete obj.password;
                                 delete obj.verified;
-                                obj.iat = Date.now();
-                                obj.exp = Date.now() + 20 * 60 * 1000;
                                 let accessToken = jwt.sign(obj, config.TOKEN_SECRET, { expiresIn: "20m" });
                                 let refreshToken = jwt.sign({ id: obj.id }, config.REFRESH_TOKEN_SECRET);
                                 sql.rawRun(`INSERT INTO refresh (id, token) VALUES("${obj.id}", "${refreshToken}")`).then(() => {
