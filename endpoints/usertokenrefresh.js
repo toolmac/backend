@@ -17,6 +17,8 @@ module.exports.execute = function (req, res) {
                 return res.status(403).json('Invalid');
             }
             else {
+                delete user.iat;
+                delete user.exp;
                 const accessToken = jwt.sign(user, config.TOKEN_SECRET, { expiresIn: '20m' });
                 res.json({
                     accessToken
