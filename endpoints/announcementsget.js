@@ -33,12 +33,12 @@ module.exports.execute = function (req, res) {
                     if (toadd !== "") {
                         query += `WHERE ${toadd}`;
                     }
-                    query += `ORDER BY timestamp DESC`;
+                    query += `ORDER BY timestamp DESC `;
                     if (req.body.amount && isNaN(parseInt(req.body.amount)) && parseInt(req.body.amount) >= 1) {
-                        query += `LIMIT ${parseInt(req.body.amount)} `;
+                        query += `LIMIT ${parseInt(req.body.amount)}`;
                     }
                     else {
-                        query += `LIMIT 10 `;
+                        query += `LIMIT 10`;
                     }
                     sql.rawAll(query).then((rows) => {
                         res.json(rows);
