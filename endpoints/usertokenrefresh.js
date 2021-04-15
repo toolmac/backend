@@ -25,6 +25,6 @@ module.exports.execute = function (req, res) {
         });
     }
     else {
-        res.status(401).json('No auth header');
+        res.status(401).json('No refresh token in body');
     }
 }
