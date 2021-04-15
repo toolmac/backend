@@ -24,7 +24,7 @@ module.exports.execute = function (req, res) {
             res.status(400).json('Invalid email');
         }
         else if (!helper.validatePassword(password)) {
-            res.status(400).json('Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character').end();
+            res.status(400).json('Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, and one number').end();
         }
         else if (firstname == "" || lastname == "" || username == "") {
             res.status(400).json('Empty fields');
