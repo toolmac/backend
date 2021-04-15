@@ -2,6 +2,8 @@ const sql = require('../lib/db');
 const helper = require('../lib/helper');
 const bcrypt = require('bcrypt');
 const nanoid = require('nanoid');
+const tokens = require('../data/tokens');
+const mailjet = require('node-mailjet').connect(tokens.mail.username, tokens.mail.password);
 
 module.exports.name = "user/register";
 module.exports.verify = function (req, res) {
@@ -40,8 +42,25 @@ module.exports.execute = function (req, res) {
                         }
                         else {
                             sql.rawRun(`INSERT INTO users(username, email, password, id, firstname, lastname) VALUES("${username}", "${email}", "${hash}", "${id}", "${firstname}", "${lastname}")`).then(() => {
-                                //confirmation email goes here, when implemented
-                                res.status(200).json(id);
+                                let verify = nanoid.nanoid(36);
+                                sql.rawRun(`INSERT INTO verify (id, code) VALUES("${id}", "${verify}")`).then(() => {
+                                    const request = mailjet.post("send", { 'version': 'v3.1' })
+                                        .request({
+                                            "Messages": [{
+                                                "From": { "Email": "verify@toolmac.patricklin.dev", "Name": "Patrick Lin" },
+                                                "To": [{ "Email": `${email}`, "Name": `${firstname} ${lastname}` }],
+                                                "Subject": "Verification Email",
+                                                "HTMLPart": `<h3>Hello ${firstname} ${lastname} and welcome to Toolmac!</h3>Here is your verification code <b>${verify}</b>. <br>Hope you enjoy Toolmac!<br><br>- Toolmac team<br><br>P.S. If you didn't sign up at Toolmac, someone else may be using your email!`
+                                            }
+                                            ]
+                                        })
+                                    request.then((result) => {
+                                        //at this point the client should redirect to a verification page to prompt verification code
+                                        res.status(200).json(id);
+                                    }).catch((err) => {
+                                        res.status(500).json('Error')
+                                    })
+                                }).catch(err => res.status(500).json('Error'));
                             }).catch(err => res.status(500).json('Error'));
                         }
                     })
