@@ -19,7 +19,14 @@ module.exports.execute = function (req, res) {
                     return res.status(403).json("Unauthorized");
                 }
                 else {
-                    res.status(200).json(user);
+                    sql.rawGet(`SELECT * FROM timetables WHERE id = ${user.id}`).then(row => {
+                        if (row) {
+                            res.status(200).send(row.json);
+                        }
+                        else {
+                            res.status(404).json('Not found');
+                        }
+                    }).catch(err => res.status(500).json('Error'));
                 }
             });
         }
