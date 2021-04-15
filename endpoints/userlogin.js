@@ -17,7 +17,7 @@ module.exports.execute = function (req, res) {
         let password = req.body.password.trim();
         let email = (req.body.email) ? req.body.email.trim() : "";
         let username = (req.body.username) ? req.body.username.trim() : "";
-        if (!helper.validateEmail(email)) {
+        if (!helper.validateEmail(email) && email !== "") {
             res.status(400).json('Invalid email');
         }
         else if (!helper.validatePassword(password)) {
