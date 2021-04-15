@@ -47,7 +47,7 @@ module.exports.execute = function (req, res) {
                                     const request = mailjet.post("send", { 'version': 'v3.1' })
                                         .request({
                                             "Messages": [{
-                                                "From": { "Email": "verify@toolmac.patricklin.dev", "Name": "Patrick Lin" },
+                                                "From": { "Email": tokens.mail.originEmail, "Name": tokens.mail.name },
                                                 "To": [{ "Email": `${email}`, "Name": `${firstname} ${lastname}` }],
                                                 "Subject": "Verification Email",
                                                 "HTMLPart": `<h3>Hello ${firstname} ${lastname} and welcome to Toolmac!</h3>Here is your verification code <b>${verify}</b>. <br>Hope you enjoy Toolmac!<br><br>- Toolmac team<br><br>P.S. If you didn't sign up at Toolmac, someone else may be using your email!`
