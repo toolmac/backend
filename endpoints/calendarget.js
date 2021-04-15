@@ -19,7 +19,7 @@ module.exports.execute = function (req, res) {
                     return res.status(403).json("Unauthorized");
                 }
                 else {
-                    if (req.body.startdate && req.body.days && req.body.startdate.day && req.body.startdate.month && req.body.year) {
+                    if (req.body.startdate && req.body.days && req.body.startdate.day && req.body.startdate.month && req.body.startdate.year) {
                         let startD = parseInt(req.body.startdate.day);
                         let startM = parseInt(req.body.startdate.month);
                         let startY = parseInt(req.body.startdate.year);
