@@ -26,3 +26,16 @@ To use this endpoint, send a POST request with these optional parameters:
 - amount (amount of results to return, default is 10)
 
 The result set is ordered by timestamp, in descending order
+
+### profile/get
+
+This API returns a JSON object with the following properties: 
+- username
+- email
+- id
+- firstname
+- lastname
+- bio
+
+To use this endpoint, send a GET or POST request without any body, with a valid Authorization Header that has the JWT token. 
+
