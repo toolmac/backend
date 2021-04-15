@@ -11,7 +11,7 @@ module.exports.verify = function (req, res) {
 
 module.exports.execute = function (req, res) {
     const refeshAuth = req.body.token;
-    if (authHeader) {
+    if (refeshAuth) {
         jwt.verify(refeshAuth, config.REFRESH_TOKEN_SECRET, (err, user) => {
             if (err) {
                 return res.status(403).json('Invalid');
