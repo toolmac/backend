@@ -18,9 +18,11 @@
   "homepage": "https://github.com/toolmac/backend#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "nanoid": "^3.1.22",
+    "node-mailjet": "^3.3.1",
     "sqlite3": "^5.0.2"
   }
 }
