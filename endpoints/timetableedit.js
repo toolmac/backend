@@ -21,7 +21,7 @@ module.exports.execute = function (req, res) {
                 else {
                     if (req.body.timetable) {
                         if (/^[\],:{}\s]*$/.test(req.body.timetable.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-                            sql.rawRun(`INSERT INTO timetables (id, json) VALUES('${user.id}', '${req.body.timetable.replace(/"/g, `""`)}'`).then(() => {
+                            sql.runWithParams(`INSERT INTO timetables (id, json) VALUES(?, ?)`, [user.id, req.body.timetable]).then(() => {
                                 res.status(200).send(row.json);
                             }).catch(err => res.status(500).json('Error'));
                         } else {
