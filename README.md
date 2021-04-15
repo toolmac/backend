@@ -51,3 +51,49 @@ This API returns a JSON object with the following properties:
 
 To use this endpoint, send a GET or POST request without any body, with a valid Authorization Header that has the JWT token. 
 
+### timetable/edit
+
+This API accepts a JSON string for the timetable (client defines format) with a valid authorization header. 
+
+The JSON is stored in the DB for future access.
+
+A 200 OK status is returned if the storage/update was successful
+
+### timetable/get
+
+This API returns the JSON string stored by the user in timetable/edit API. (Auth header required)
+
+### user/login
+
+Login API that requires either one of password, or email, and of course the password.
+
+It returns: 
+- accessToken (the JWT access token that expires in 20 minutes)
+- refreshToken (the refresh token to obtain a new access token. this is permanent until the user logs out)
+
+### user/logout
+
+Returns a 200 OK status if successful. Must provide a `token` field in request body with the refresh token. 
+
+### user/register
+
+Must provide the following fields: 
+- email
+- username
+- password
+- firstname
+- lastname
+
+A verification email will be sent after a successful request (which returns the new user's id). You should then prompt them for a request to user/verify
+
+### user/tokenrefresh
+
+This API is where you refresh the access token with the refresh token
+
+Must provide `token` field in request with refresh token, API will return a single `accessToken` field
+
+### user/verify
+
+POST request a single field `code` with the verification code sent through email. 
+
+200 OK is sent if successful, otherwise a 401 Not Authorized or 500 Internal Server Error
