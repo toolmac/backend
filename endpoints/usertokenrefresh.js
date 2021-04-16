@@ -14,7 +14,7 @@ module.exports.execute = function (req, res) {
     if (refeshAuth) {
         jwt.verify(refeshAuth, config.REFRESH_TOKEN_SECRET, (err, user) => {
             if (err) {
-                return res.status(403).json('Invalid');
+                return res.status(403).json({ status: 403, error: "Invalid or expired refresh token" });
             }
             else {
                 delete user.iat;
@@ -27,6 +27,6 @@ module.exports.execute = function (req, res) {
         });
     }
     else {
-        res.status(401).json('No refresh token in body');
+        res.status(400).json({ status: 400, error: 'No refresh token in body' });
     }
 }
