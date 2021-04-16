@@ -21,24 +21,24 @@ module.exports.execute = function (req, res) {
         let lastname = req.body.lastname.trim();
         let username = req.body.username.trim();
         if (!helper.validateEmail(email)) {
-            res.status(400).json('Invalid email');
+            res.status(400).json({ status: 400, error: 'Invalid email' });
         }
         else if (!helper.validatePassword(password)) {
-            res.status(400).json('Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, and one number').end();
+            res.status(400).json({ status: 400, error: 'Password must be minimum eight characters, at least one uppercase letter, one lowercase letter, and one number' }).end();
         }
         else if (firstname == "" || lastname == "" || username == "") {
-            res.status(400).json('Empty fields');
+            res.status(400).json({ status: 400, error: 'Empty fields' });
         }
         else {
             sql.rawGet(`SELECT * FROM users WHERE email = ? OR username = ?`, [email, username]).then(row => {
                 if (row) {
-                    res.status(400).json('Username or email is in use');
+                    res.status(400).json({ status: 400, error: 'Username or email is in use' });
                 }
                 else {
                     let id = nanoid.nanoid();
                     bcrypt.hash(password, 10, function (err, hash) {
                         if (err) {
-                            res.status(500).json('Error');
+                            res.status(500).json({ status: 500, error: "Internal server error" });
                         }
                         else {
                             sql.rawRun(`INSERT INTO users(username, email, password, id, firstname, lastname) VALUES(?, ?, ?, ?, ?, ?)`, [username, email, hash, id, firstname, lastname]).then(() => {
@@ -56,19 +56,19 @@ module.exports.execute = function (req, res) {
                                         })
                                     request.then((result) => {
                                         //at this point the client should redirect to a verification page to prompt verification code
-                                        res.status(200).json(id);
+                                        res.status(200).json({ id });
                                     }).catch((err) => {
-                                        res.status(500).json('Error')
+                                        res.status(500).json({ status: 500, error: "Internal server error" });
                                     })
-                                }).catch(err => res.status(500).json('Error'));
-                            }).catch(err => res.status(500).json('Error'));
+                                }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
+                            }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
                         }
                     })
                 }
-            }).catch(err => res.status(500).json('Error'));
+            }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
         }
     }
     else {
-        res.status(400).json('Error');
+        res.status(400).json({ status: 400, error: "Missing required fields" });
     }
 }
