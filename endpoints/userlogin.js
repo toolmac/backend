@@ -27,7 +27,7 @@ module.exports.execute = function (req, res) {
             res.status(400).json('Empty fields');
         }
         else {
-            sql.rawGet(`SELECT * FROM users WHERE email = "${email}" OR username = "${username}"`).then(row => {
+            sql.rawGet(`SELECT * FROM users WHERE email = ? OR username = ?`, [email, username]).then(row => {
                 if (row) {
                     bcrypt.compare(password, row.password, function (err, result) {
                         if (err) {
@@ -40,7 +40,7 @@ module.exports.execute = function (req, res) {
                                 delete obj.verified;
                                 let accessToken = jwt.sign(obj, config.TOKEN_SECRET, { expiresIn: "20m" });
                                 let refreshToken = jwt.sign({ id: obj.id }, config.REFRESH_TOKEN_SECRET);
-                                sql.rawRun(`INSERT INTO refresh (id, token) VALUES("${obj.id}", "${refreshToken}")`).then(() => {
+                                sql.rawRun(`INSERT INTO refresh (id, token) VALUES(?, ?)`, [obj.id, refreshToken]).then(() => {
                                     res.json({
                                         accessToken,
                                         refreshToken

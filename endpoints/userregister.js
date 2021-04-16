@@ -30,7 +30,7 @@ module.exports.execute = function (req, res) {
             res.status(400).json('Empty fields');
         }
         else {
-            sql.rawGet(`SELECT * FROM users WHERE email = "${email}" OR username = "${username}"`).then(row => {
+            sql.rawGet(`SELECT * FROM users WHERE email = ? OR username = ?`, [email, username]).then(row => {
                 if (row) {
                     res.status(400).json('Username or email is in use');
                 }
@@ -41,9 +41,9 @@ module.exports.execute = function (req, res) {
                             res.status(500).json('Error');
                         }
                         else {
-                            sql.rawRun(`INSERT INTO users(username, email, password, id, firstname, lastname) VALUES("${username}", "${email}", "${hash}", "${id}", "${firstname}", "${lastname}")`).then(() => {
+                            sql.rawRun(`INSERT INTO users(username, email, password, id, firstname, lastname) VALUES(?, ?, ?, ?, ?, ?)`, [username, email, hash, id, firstname, lastname]).then(() => {
                                 let verify = nanoid.nanoid(36);
-                                sql.rawRun(`INSERT INTO verify (id, code) VALUES("${id}", "${verify}")`).then(() => {
+                                sql.rawRun(`INSERT INTO verify (id, code) VALUES(?, ?)`, [id, verify]).then(() => {
                                     const request = mailjet.post("send", { 'version': 'v3.1' })
                                         .request({
                                             "Messages": [{

@@ -17,7 +17,7 @@ module.exports.execute = function (req, res) {
                 return res.status(403).json('Unauthorized');
             }
             else {
-                sql.rawRun(`DELETE FROM refresh WHERE token = "${refeshAuth}"`).then(() => {
+                sql.rawRun(`DELETE FROM refresh WHERE token = ?`, [refeshAuth]).then(() => {
                     res.status(200).json('Logout success');
                 }).catch(err => res.status(500).json('Error'));
             }

@@ -21,14 +21,14 @@ module.exports.execute = function (req, res) {
                 else {
                     if (req.body.timetable) {
                         if (/^[\],:{}\s]*$/.test(req.body.timetable.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-                            sql.rawGet(`SELECT * FROM timetables WHERE id = "${user.id}"`).then(row => {
+                            sql.rawGet(`SELECT * FROM timetables WHERE id = ?`, [user.id]).then(row => {
                                 if (row) {
-                                    sql.runWithParams(`UPDATE timetables SET json = ? WHERE id = ?`, [req.body.timetable, user.id]).then(() => {
+                                    sql.rawRun(`UPDATE timetables SET json = ? WHERE id = ?`, [req.body.timetable, user.id]).then(() => {
                                         res.status(200).json("Updated successfully");
                                     }).catch(err => res.status(500).json('Error'));
                                 }
                                 else {
-                                    sql.runWithParams(`INSERT INTO timetables (id, json) VALUES(?, ?)`, [user.id, req.body.timetable]).then(() => {
+                                    sql.rawRun(`INSERT INTO timetables (id, json) VALUES(?, ?)`, [user.id, req.body.timetable]).then(() => {
                                         res.status(200).json("Inserted successfully");
                                     }).catch(err => res.status(500).json('Error'));
                                 }

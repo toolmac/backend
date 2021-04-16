@@ -17,10 +17,10 @@ module.exports.execute = function (req, res) {
     }
     */
     if (req.body.code) {
-        sql.rawGet(`SELECT * FROM verify WHERE code = "${req.body.code}"`).then(row => {
+        sql.rawGet(`SELECT * FROM verify WHERE code = ?`, [req.body.code]).then(row => {
             if (row) {
-                sql.rawRun(`DELETE FROM verify WHERE code = "${req.body.code}"`).then(() => {
-                    sql.rawRun(`UPDATE users SET verified = 1 WHERE id = "${row.id}"`).then(() => {
+                sql.rawRun(`DELETE FROM verify WHERE code = ?`, [req.body.code]).then(() => {
+                    sql.rawRun(`UPDATE users SET verified = 1 WHERE id = ?`, [row.id]).then(() => {
                         res.status(200).json("You are verified!");
                     }).catch(err => res.status(500).json('Error'));
                 }).catch(err => res.status(500).json('Error'));

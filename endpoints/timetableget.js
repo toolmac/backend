@@ -19,7 +19,7 @@ module.exports.execute = function (req, res) {
                     return res.status(403).json("Unauthorized");
                 }
                 else {
-                    sql.rawGet(`SELECT * FROM timetables WHERE id = "${user.id}"`).then(row => {
+                    sql.rawGet(`SELECT * FROM timetables WHERE id = ?`, [user.id]).then(row => {
                         if (row) {
                             res.status(200).send(row.json);
                         }

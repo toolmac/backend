@@ -40,7 +40,7 @@ module.exports.execute = function (req, res) {
                     else {
                         query += `LIMIT 10`;
                     }
-                    sql.rawAll(query).then((rows) => {
+                    sql.rawAll(query, []).then((rows) => {
                         res.json(rows);
                     }).catch(err => res.status(500).json('Error'));
                 }
