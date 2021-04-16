@@ -21,16 +21,16 @@ module.exports.execute = function (req, res) {
             if (row) {
                 sql.rawRun(`DELETE FROM verify WHERE code = ?`, [req.body.code]).then(() => {
                     sql.rawRun(`UPDATE users SET verified = 1 WHERE id = ?`, [row.id]).then(() => {
-                        res.status(200).json("You are verified!");
-                    }).catch(err => res.status(500).json('Error'));
-                }).catch(err => res.status(500).json('Error'));
+                        res.status(200).json({ message: "You are verified!" });
+                    }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
+                }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
             }
             else {
-                res.status(401).json("Invalid verification code");
+                res.status(401).json({ status: 401, error: "Invalid verification code" });
             }
-        }).catch(err => res.status(500).json('Error'));
+        }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
     }
     else {
-        res.status(401).json("Invalid verification code");
+        res.status(400).json({ status: 400, error: "Missing code field in request body" });
     }
 }
