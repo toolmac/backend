@@ -18,20 +18,20 @@ module.exports.execute = function (req, res) {
         let email = (req.body.email) ? req.body.email.trim() : "";
         let username = (req.body.username) ? req.body.username.trim() : "";
         if (!helper.validateEmail(email) && email !== "") {
-            res.status(400).json('Invalid email');
+            res.status(400).json({ status: 400, error: 'Invalid email' });
         }
         else if (!helper.validatePassword(password)) {
-            res.status(400).json('Invalid password');
+            res.status(400).json({ status: 400, error: 'Invalid password' });
         }
         else if (email == "" && username == "") {
-            res.status(400).json('Empty fields');
+            res.status(400).json({ status: 400, error: 'Empty fields' });
         }
         else {
             sql.rawGet(`SELECT * FROM users WHERE email = ? OR username = ?`, [email, username]).then(row => {
                 if (row) {
                     bcrypt.compare(password, row.password, function (err, result) {
                         if (err) {
-                            res.status(500).json('Error');
+                            res.status(500).json({ status: 500, error: "Internal server error" });
                         }
                         else if (result) {
                             if (row.verified == 1) {
@@ -45,26 +45,26 @@ module.exports.execute = function (req, res) {
                                         accessToken,
                                         refreshToken
                                     });
-                                }).catch(err => res.status(500).json('Error'));
+                                }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
                             }
                             else {
                                 //on app, go to verification entry page
                                 //on website, redirect to verification
-                                res.status(401).json("Verification required");
+                                res.status(401).json({ status: 401, error: "Verification required" });
                             }
                         }
                         else {
-                            res.status(401).json('Email/username or password is incorrect');
+                            res.status(401).json({ status: 401, error: 'Email/username or password is incorrect' });
                         }
                     });
                 }
                 else {
-                    res.status(401).json('Email/username or password is incorrect');
+                    res.status(401).json({ status: 401, error: 'Email/username or password is incorrect' });
                 }
-            }).catch(err => res.status(500).json('Error'));
+            }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
         }
     }
     else {
-        res.status(400).json('Missing required fields');
+        res.status(400).json({ status: 400, error: 'Missing required fields' });
     }
 }
