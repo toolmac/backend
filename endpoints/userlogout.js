@@ -14,16 +14,16 @@ module.exports.execute = function (req, res) {
     if (refeshAuth) {
         jwt.verify(refeshAuth, config.REFRESH_TOKEN_SECRET, (err, user) => {
             if (err) {
-                return res.status(403).json('Unauthorized');
+                return res.status(403).json({ status: 403, error: "Invalid or expired refresh token" });
             }
             else {
                 sql.rawRun(`DELETE FROM refresh WHERE token = ?`, [refeshAuth]).then(() => {
-                    res.status(200).json('Logout success');
-                }).catch(err => res.status(500).json('Error'));
+                    res.status(200).json({ message: 'Logout success' });
+                }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
             }
         });
     }
     else {
-        res.status(401).json('Bad request');
+        res.status(401).json({ status: 401, error: "Missing token field in body" });
     }
 }
