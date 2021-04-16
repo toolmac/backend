@@ -16,7 +16,7 @@ module.exports.execute = function (req, res) {
         if (token) {
             jwt.verify(token, config.TOKEN_SECRET, (err, user) => {
                 if (err) {
-                    return res.status(403).json("Unauthorized");
+                    return res.status(403).json({ status: 403, error: "Invalid or expired JWT token" });
                 }
                 else {
                     let query = "SELECT * FROM announcements "
@@ -42,14 +42,14 @@ module.exports.execute = function (req, res) {
                     }
                     sql.rawAll(query, []).then((rows) => {
                         res.json(rows);
-                    }).catch(err => res.status(500).json('Error'));
+                    }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
                 }
             });
         }
         else {
-            res.status(401).json('Missing auth header');
+            res.status(401).json({ status: 401, error: "Missing authorization header contents" });
         }
     } else {
-        res.status(401).json('Missing auth header');
+        res.status(401).json({ status: 401, error: "Missing authorization header" });
     }
 }
