@@ -16,7 +16,7 @@ module.exports.execute = function (req, res) {
         if (token) {
             jwt.verify(token, config.TOKEN_SECRET, (err, user) => {
                 if (err) {
-                    return res.status(403).json("Unauthorized");
+                    return res.status(403).json({ status: 403, error: "Invalid or expired JWT token" });
                 }
                 else {
                     if (req.body.startdate && req.body.days && req.body.startdate.day && req.body.startdate.month && req.body.startdate.year) {
@@ -26,7 +26,7 @@ module.exports.execute = function (req, res) {
                         let days = parseInt(req.body.days);
                         if (startD && startM && startY && days) {
                             if (days > 100) {
-                                res.status(401).json('Limited to 100 days per request');
+                                res.status(401).json({ status: 401, error: "Limited to 100 days per request" });
                             }
                             else {
                                 sql.rawAll(`SELECT * FROM days`, []).then(rows => {
@@ -54,24 +54,24 @@ module.exports.execute = function (req, res) {
                                             }
                                         }
                                         res.json(result);
-                                    }).catch(err => res.status(500).json('Error'));
-                                }).catch(err => res.status(500).json('Error'));
+                                    }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
+                                }).catch(err => res.status(500).json({ status: 500, error: "Internal server error" }));
                             }
                         }
                         else {
-                            res.status(400).json('Invalid startdate/days');
+                            res.status(400).json({ status: 400, error: 'Invalid startdate/days' });
                         }
                     }
                     else {
-                        res.status(400).json('No startdate or days specified');
+                        res.status(400).json({ status: 400, error: 'No startdate or days specified' });
                     }
                 }
             });
         }
         else {
-            res.status(401).json('Missing auth header');
+            res.status(401).json({ status: 401, error: "Missing authorization header contents" });
         }
     } else {
-        res.status(401).json('Missing auth header');
+        res.status(401).json({ status: 401, error: "Missing authorization header" });
     }
 }
