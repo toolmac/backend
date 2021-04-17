@@ -46,18 +46,3 @@ const PORT = 8080;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
-
-/*
-announcements/get
-profile/edit
-profile/get
-timetable/get
-timetable/edit
-calendar/get
-calendar/edit
-
-user/login
-user/register
-user/verify
-user/logout
-*/
