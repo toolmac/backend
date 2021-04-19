@@ -27,7 +27,7 @@ fs.readdirSync('./endpoints/').forEach(function (file) {
 app.use('/', function (req, res) {
     const endpoint = req.url.split('?')[0].slice(1);
     if (!endpoints[endpoint]) {
-        res.status(404).json('Could not find endpoint');
+        res.status(404).json({ status: 404, error: 'Could not find endpoint' });
     }
     else if (endpoints[endpoint].verify(req, res)) {
         try {
@@ -38,7 +38,7 @@ app.use('/', function (req, res) {
         }
     }
     else {
-        res.status(403).json('Not allowed');
+        res.status(403).json({ status: 403, error: 'Endpoint access denied' });
     }
 })
 
